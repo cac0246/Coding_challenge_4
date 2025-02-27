@@ -1,0 +1,102 @@
+---
+title: "Markdown_practice"
+author: "Camila Cuadrado & Raimundo Espejo"
+date: "2025-02-27"
+output: 
+  pdf_document:
+    toc: true
+    number_sections: true
+        
+---
+
+## Question 1: Explain the following
+a.	YAML header: there is general information about date, authors and the type of output desire to obtain after the knit. 
+b.	Literate programming: is when a computer programme is giving as an explanation of how it works.
+
+## Question 2: Take the code you wrote for coding challenge 3, question 5, and incorporate it into your R markdown file. Some of you have already been doing this, which is great! Your final R markdown file should have the following elements.
+
+### At the top of the document, make a clickable link to the manuscript where these data are published. 
+
+[link to the manuscript](https://doi.org/10.1094/PDIS-06-21-1253-RE)
+
+### Read the data using a relative file path with na.strings option set to “na”. This means you need to put the Mycotoxin.csv file we have used for the past two weeks into your directory, which git tracks. 
+```{r}
+data <- read.csv("~/Library/CloudStorage/OneDrive-AuburnUniversity/Spring 2025/PLPA_5820/Markdown_notes/MycotoxinData.csv", na.strings = "na")
+
+```
+
+### Make a separate code chunk for the figures plotting the DON data, 15ADON, and Seedmass, and one for the three combined using ggarrange. 
+
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+
+# Preparing the color blind palette that we are going to use. If we define color within a vector, then we can just reference the colors later in the figures
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+# Plot DON data
+question1 <- ggplot(data, aes(x = Treatment, y = DON, color = Cultivar, fill = Cultivar)) +
+       geom_boxplot(position = position_dodge()) +
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), alpha = 0.6, ) +
+  facet_wrap(~Cultivar, scales = "fixed") +
+  xlab("") +
+  ylab("DON (ppm)") +
+  scale_fill_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  scale_color_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  theme_classic()
+
+question1
+
+# Plot 15ADON data
+question3_plot1 <- ggplot(data, aes(x = Treatment, y = X15ADON, color = Cultivar, fill = Cultivar)) +
+  geom_boxplot(position = position_dodge()) +
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), alpha = 0.6, ) +
+  facet_wrap(~Cultivar, scales = "fixed") +
+  xlab("") +
+  ylab("15ADON") +
+  scale_fill_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  scale_color_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  theme_classic()
+
+question3_plot1
+
+# Plot Seedmass data
+question3_plot2 <- ggplot(data, aes(x = Treatment, y = MassperSeed_mg, color = Cultivar, fill = Cultivar)) +
+  geom_boxplot(position = position_dodge()) +
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), alpha = 0.6, ) +
+  facet_wrap(~Cultivar, scales = "fixed") +
+  xlab("") +
+  ylab("Seed Mass (mg)") +
+  scale_fill_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  scale_color_manual(values = c(cbbPalette[[6]], cbbPalette[[4]])) +
+  theme_classic()
+
+question3_plot2
+
+#Loading library
+library(ggpubr)
+question5_plot1 <- question1 +
+  geom_pwc(aes(group = Treatment), method = "t_test", label = "p.adj.signif")
+
+question5_plot2 <- question3_plot1 +
+  geom_pwc(aes(group = Treatment), method = "t_test", label = "p.adj.signif")
+
+question5_plot3 <- question3_plot2 +
+  geom_pwc(aes(group = Treatment), method = "t_test", label = "p.adj.signif")
+
+question5_plot4 <- ggarrange(question5_plot1, 
+                             question5_plot2, 
+                             question5_plot3, 
+                       labels = c("A", "B", "C"),
+                       nrow = 1,  
+                       ncol = 3,
+                       common.legend = T)
+
+question5_plot4
+```
+
+## Question 3: Knit your document together in the following formats: 
+
+
+
