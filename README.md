@@ -2,7 +2,7 @@
 
 # Link to Analysis
 
-- [Link to .md file](Markdown_notes/Markdown_practice.md)
+- [Link to .md file](Markdown_practice.md)
 
 # File tree
 
